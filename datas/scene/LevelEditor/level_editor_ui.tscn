@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2nyqlo2n6s0k"]
+
+[ext_resource type="FontFile" uid="uid://cblbl0ue1f5sl" path="res://datas/ressources/fonts/rage_italic.TTF" id="1_gq4qg"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_eqnqe"]
+font_size = 32
+font_color = Color(0, 1, 1, 1)
+
+[node name="LevelEditorUi" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.731771
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="panel"]
+clip_contents = true
+layout_direction = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LabelTitle" type="Label" parent="panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_gq4qg")
+theme_override_font_sizes/font_size = 60
+text = "Editeur De Niveau
+___________________"
+label_settings = SubResource("LabelSettings_eqnqe")
+clip_text = true
+text_overrun_behavior = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="LabelColor" type="Label" parent="panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Couleur :"
+
+[node name="TextEdit" type="TextEdit" parent="panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
