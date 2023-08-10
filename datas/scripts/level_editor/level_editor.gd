@@ -56,27 +56,95 @@ var dict_atlas_coord_for_bricks = {
 @onready  var _cam = self.get_node("Camera2D")
 
 
+var _speed_horizontal = 0.00
+var _speed_vertical = 0.00
+
+const ACCEL = 0.20
+const MAXIMUM_CAMERA_SPEED = 12
+const DECCELERATION = 0.15
+
+
+var _zoom_speed = 0.00
+
+const ZOOM_ACCEL = 0.005
+const CAM_MAXIMUM_SPEED_ZOOM = 0.30
+const CAM_ZOOM_DECCEL = 0.15
+const CAM_MINIMUM_ZOOM = 1
+const CAM_MAXIMUM_ZOOM = 2
+
+
 func _ready():
 	self.set_camera_limits()
 
 
 func _process(delta):
 	self.check_input()
+	
+	if self._speed_horizontal > 0:
+		if self._cam.zoom.x > 0:
+			self._speed_horizontal -= self._cam.zoom.x/100
+	
+	if self._speed_vertical > 0:
+		if self._cam.zoom.y > 0:
+			self._speed_vertical -= self._cam.zoom.y/100
+		
+	self._cam.global_position.x += self._speed_horizontal
+	self._cam.global_position.y += self._speed_vertical
+	
 
 
 func check_input():
 	if Input.is_action_pressed("lvl_editor_left"):
-		self._cam.global_position.x -= 12
+		self._speed_horizontal = max(self._speed_horizontal-self.ACCEL, -self.MAXIMUM_CAMERA_SPEED)
 	elif Input.is_action_pressed("lvl_editor_right"):
-		self._cam.global_position.x += 32
+		self._speed_horizontal = min(self._speed_horizontal+self.ACCEL, self.MAXIMUM_CAMERA_SPEED)
+	else:
+		self._speed_horizontal = lerpf(self._speed_horizontal, 0, self.DECCELERATION)
+	
+	if Input.is_action_pressed("lvl_editor_up"):
+		self._speed_vertical = max(self._speed_vertical-self.ACCEL, -self.MAXIMUM_CAMERA_SPEED)
+	elif Input.is_action_pressed("lvl_editor_down"):
+		self._speed_vertical = min(self._speed_vertical+self.ACCEL, self.MAXIMUM_CAMERA_SPEED)
+	else:
+		self._speed_vertical = lerpf(self._speed_vertical, 0, self.DECCELERATION)
+	
+	var zoom = self._cam.zoom.x
+	if Input.is_action_pressed("zoom_in"):
+		self._zoom_speed = max(self._zoom_speed-self.ZOOM_ACCEL, -self.CAM_MAXIMUM_SPEED_ZOOM)
+	elif Input.is_action_pressed("zoom_out"):
+		self._zoom_speed = min(self._zoom_speed+self.ZOOM_ACCEL, self.CAM_MAXIMUM_SPEED_ZOOM)
+	else:
+		self._zoom_speed = lerpf(self._zoom_speed, 0, self.CAM_ZOOM_DECCEL)
+	
+	if self._cam.zoom.x != self._cam.zoom.y:
+		self._cam.zoom.y = self._cam.zoom.x
+	
+	zoom += self._zoom_speed
+	
+	if zoom > self.CAM_MAXIMUM_ZOOM:
+		zoom = self.CAM_MAXIMUM_ZOOM
+	elif zoom < self.CAM_MINIMUM_ZOOM:
+		zoom = self.CAM_MINIMUM_ZOOM
+	
+	if zoom != self._cam.zoom.x:
+		self._cam.zoom.x = zoom
+	
+	if zoom != self._cam.zoom.y:
+		self._cam.zoom.y = zoom
+	
+
 
 func set_camera_limits():
-	var cam = self.get_node("Camera2D")
-	#var used_rect : Vector2 = to_global(self._tile_map.get_used_rect())
+
+	var zone = self._tile_map.get_used_rect()
+	var cells_size = self._tile_map.tile_set.tile_size
 	
+	self._cam.limit_top = zone.position.y * cells_size.y
+	self._cam.limit_left = zone.position.x * cells_size.x
 	
-	cam.limit_left = self._tile_map.global_position.x
-	print("used_rect:", used_rect)
+	self._cam.limit_right = (zone.position.x+zone.size.x) * cells_size.x
+	
+	self._cam.limit_bottom = (zone.position.y + zone.size.y) * cells_size.y
 
 
 func _input(InputEvent):
