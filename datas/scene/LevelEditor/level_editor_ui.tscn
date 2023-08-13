@@ -1,10 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://c2nyqlo2n6s0k"]
+[gd_scene load_steps=8 format=3 uid="uid://c2nyqlo2n6s0k"]
 
 [ext_resource type="FontFile" uid="uid://cblbl0ue1f5sl" path="res://datas/ressources/fonts/rage_italic.TTF" id="1_gq4qg"]
+[ext_resource type="Script" path="res://datas/scripts/level_editor/level_editor_ui.gd" id="1_harp3"]
+[ext_resource type="Theme" uid="uid://by1ehfr2uc6tt" path="res://datas/themes/level_editor_ui.tres" id="2_qalhl"]
+[ext_resource type="PackedScene" uid="uid://cistd7udthb8t" path="res://datas/scene/level_editor.tscn" id="3_uuxjd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_eqnqe"]
 font_size = 32
 font_color = Color(0, 1, 1, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_1fjbe"]
+font_size = 30
+font_color = Color(0, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5wmud"]
+font_size = 30
+font_color = Color(0, 1, 0, 1)
 
 [node name="LevelEditorUi" type="Control"]
 layout_mode = 3
@@ -13,6 +24,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_harp3")
 
 [node name="panel" type="Panel" parent="."]
 layout_mode = 1
@@ -22,6 +34,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 2
+theme = ExtResource("2_qalhl")
 metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="panel"]
@@ -37,6 +50,7 @@ grow_vertical = 2
 [node name="LabelTitle" type="Label" parent="panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 2
+theme = ExtResource("2_qalhl")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_gq4qg")
 theme_override_font_sizes/font_size = 60
@@ -47,13 +61,67 @@ clip_text = true
 text_overrun_behavior = 3
 metadata/_edit_use_anchors_ = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="panel/VBoxContainer"]
+[node name="HBoxContainerColor" type="HBoxContainer" parent="panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 2
 
-[node name="LabelColor" type="Label" parent="panel/VBoxContainer/HBoxContainer"]
+[node name="LabelColor" type="Label" parent="panel/VBoxContainer/HBoxContainerColor"]
+texture_filter = 5
+texture_repeat = 1
 layout_mode = 2
+theme = ExtResource("2_qalhl")
 text = "Couleur :"
+label_settings = SubResource("LabelSettings_1fjbe")
 
-[node name="TextEdit" type="TextEdit" parent="panel/VBoxContainer/HBoxContainer"]
+[node name="TextEditColor" type="TextEdit" parent="panel/VBoxContainer/HBoxContainerColor"]
+clip_contents = true
 layout_mode = 2
+size_flags_horizontal = 3
+scroll_fit_content_height = true
+
+[node name="HBoxContainerPower" type="HBoxContainer" parent="panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="LabelPower" type="Label" parent="panel/VBoxContainer/HBoxContainerPower"]
+layout_mode = 2
+text = "Pouvoir :"
+label_settings = SubResource("LabelSettings_5wmud")
+
+[node name="TextEditPower" type="TextEdit" parent="panel/VBoxContainer/HBoxContainerPower"]
+texture_filter = 6
+texture_repeat = 1
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+context_menu_enabled = false
+scroll_fit_content_height = true
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+z_index = -1
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+disable_3d = true
+handle_input_locally = false
+size = Vector2i(840, 700)
+size_2d_override_stretch = true
+render_target_update_mode = 4
+
+[node name="LevelEditor" parent="SubViewportContainer/SubViewport" instance=ExtResource("3_uuxjd")]
+
+[node name="VSliderZoom" type="VSlider" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.686632
+anchor_top = 0.186728
+anchor_right = 0.732639
+anchor_bottom = 0.433642
+metadata/_edit_use_anchors_ = true
+
+[connection signal="text_changed" from="panel/VBoxContainer/HBoxContainerColor/TextEditColor" to="." method="_on_text_edit_color_text_changed"]
+[connection signal="text_changed" from="panel/VBoxContainer/HBoxContainerPower/TextEditPower" to="." method="_on_text_edit_power_text_changed"]
+[connection signal="ZoomKeyBoardShortCut" from="SubViewportContainer/SubViewport/LevelEditor" to="." method="_on_level_editor_zoom_key_board_short_cut"]
+[connection signal="value_changed" from="VSliderZoom" to="." method="_on_v_slider_zoom_value_changed"]
