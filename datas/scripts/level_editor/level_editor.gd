@@ -55,6 +55,8 @@ var dict_atlas_coord_for_bricks = {
 @onready var _tile_map = self.get_node("TileMapWall")
 @onready  var _cam = self.get_node("Camera2D")
 
+signal ZoomKeyBoardShortCut
+
 
 var _speed_horizontal = 0.00
 var _speed_vertical = 0.00
@@ -73,12 +75,16 @@ const CAM_MINIMUM_ZOOM = 1
 const CAM_MAXIMUM_ZOOM = 2
 
 
+@onready var _lvlEditor = self.find_parent("LevelEditorUi")
+
+
 func _ready():
 	self.set_camera_limits()
 
 
 func _process(delta):
-	self.check_input()
+	if not self._lvlEditor.get_textedit_focus():
+		self.check_input()
 	
 	if self._speed_horizontal > 0:
 		if self._cam.zoom.x > 0:
@@ -131,6 +137,7 @@ func check_input():
 	
 	if zoom != self._cam.zoom.y:
 		self._cam.zoom.y = zoom
+		emit_signal("ZoomKeyBoardShortCut", self._zoom_speed)
 	
 
 
@@ -148,7 +155,22 @@ func set_camera_limits():
 
 
 func _input(InputEvent):
-	if Input.is_action_just_pressed("left_click"):
-		var mouse_global_pos_2D_world = get_viewport().get_mouse_position()
-		var tilemap_click_global_pos_2D_world = self.get_node("TileMapBricks").local_to_map(mouse_global_pos_2D_world)
+	var mouse_global_pos_2D_world = self.get_local_mouse_position()+Vector2(0,32)
+	var tilemap_brick = self.get_node("TileMapBricks")
 	
+	var ground_layer = 0
+	
+	if Input.is_action_just_pressed("left_click"):
+		var tilemap_click_global_pos_2D_world = tilemap_brick.local_to_map(mouse_global_pos_2D_world)
+		var source_id : int = 0
+		
+		var atlas_coord : Vector2i = Vector2i(2,1)
+		
+		tilemap_brick.set_cell(0, tilemap_click_global_pos_2D_world, source_id, atlas_coord) 
+		
+	elif Input.is_action_pressed("right_click"):
+		self._cam.global_position = mouse_global_pos_2D_world
+	elif Input.is_action_just_pressed("return_textedit"):
+		if self._lvlEditor.get_textedit_focus():
+			var obj = self._lvlEditor.get_textedit_has_focus()
+			obj.release_focus()
