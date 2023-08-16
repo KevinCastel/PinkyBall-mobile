@@ -2,17 +2,17 @@ extends Node2D
 
 var dict_atlas_coord_for_bricks = {
 	"blue_plane" : Vector2i(1,0),
-	"green_plane" : Vector2i(2,0),
+	"green_plane" : Vector2i(2,0), 
 	"yellow_plane" : Vector2i(3,0),
 	"pink_plane" : Vector2i(4,0),
 	"blue_coffee" : Vector2i(6,0),
 	"green_coffee" : Vector2i(7,0),
 	"yellow_coffee" : Vector2i(0,1),
 	"pink_coffee" : Vector2i(1,1),
-	"blue_slow_ball" : Vector2i(3,1),
-	"green_slow_ball" : Vector2i(4,1),
-	"yellow_slow_ball" : Vector2i(5,1),
-	"pink_slow_ball" : Vector2i(6,1),
+	"blue_slowerball" : Vector2i(3,1),
+	"green_slowerball" : Vector2i(4,1),
+	"yellow_slowerball" : Vector2i(5,1),
+	"pink_slowerball" : Vector2i(6,1),
 	"blue_deadhead" : Vector2i(0,2),
 	"green_deadhead" : Vector2i(1,2),
 	"yellow_deadhead" : Vector2i(2,2),
@@ -48,11 +48,14 @@ var dict_atlas_coord_for_bricks = {
 	"pink_rc" : Vector2i(1,7),
 	"yellow_rc" : Vector2i(2,7),
 	"blue_rc" : Vector2i(3,7),
-	"green_rc" : Vector2i(4,7)
+	"green_rc" : Vector2i(4,7),
+	"black" : Vector2i(7,6)
 }
 
+var _atlas_brick : Vector2i = Vector2i(0,0)
 
 @onready var _tile_map = self.get_node("TileMapWall")
+@onready var _tilemap_brick = self.get_node("TileMapBricks")
 @onready  var _cam = self.get_node("Camera2D")
 
 signal ZoomKeyBoardShortCut
@@ -138,7 +141,6 @@ func check_input():
 	if zoom != self._cam.zoom.y:
 		self._cam.zoom.y = zoom
 		emit_signal("ZoomKeyBoardShortCut", self._zoom_speed)
-	
 
 
 func set_camera_limits():
@@ -154,19 +156,26 @@ func set_camera_limits():
 	self._cam.limit_bottom = (zone.position.y + zone.size.y) * cells_size.y
 
 
+func is_click_on_tilemap_brick(mouse_global_position_2D_WORLD):
+	var zone = self._tilemap_brick.get_used_rect()
+	var cells_size = self._tilemap_brick.tile_set.tile_size
+	
+	var is_horizontal_ok = (mouse_global_position_2D_WORLD.x >  zone.position.x*cells_size.x && mouse_global_position_2D_WORLD.x < (zone.position.x+zone.size.x)*cells_size.x)
+	var is_verticaly_ok = (mouse_global_position_2D_WORLD.y > zone.position.y*cells_size.y && mouse_global_position_2D_WORLD.y < (zone.size.y+zone.position.y)*cells_size.y)
+	
+	return (is_horizontal_ok && is_verticaly_ok)
+
+
 func _input(InputEvent):
 	var mouse_global_pos_2D_world = self.get_local_mouse_position()+Vector2(0,32)
-	var tilemap_brick = self.get_node("TileMapBricks")
 	
 	var ground_layer = 0
 	
-	if Input.is_action_just_pressed("left_click"):
-		var tilemap_click_global_pos_2D_world = tilemap_brick.local_to_map(mouse_global_pos_2D_world)
+	if Input.is_action_just_pressed("left_click") && self.is_click_on_tilemap_brick(mouse_global_pos_2D_world):
+		var tilemap_click_global_pos_2D_world = self._tilemap_brick.local_to_map(mouse_global_pos_2D_world)
 		var source_id : int = 0
 		
-		var atlas_coord : Vector2i = Vector2i(2,1)
-		
-		tilemap_brick.set_cell(0, tilemap_click_global_pos_2D_world, source_id, atlas_coord) 
+		self._tilemap_brick.set_cell(0, tilemap_click_global_pos_2D_world, source_id, self._atlas_brick) 
 		
 	elif Input.is_action_pressed("right_click"):
 		self._cam.global_position = mouse_global_pos_2D_world
@@ -174,3 +183,12 @@ func _input(InputEvent):
 		if self._lvlEditor.get_textedit_focus():
 			var obj = self._lvlEditor.get_textedit_has_focus()
 			obj.release_focus()
+
+
+func set_brick(brick_name:String):
+	self._atlas_brick = self.dict_atlas_coord_for_bricks[brick_name]
+
+func get_tileset_brick_index(index_brick:int):
+	var list_keys = self.dict_atlas_coord_for_bricks.keys()
+	
+	return list_keys[index_brick-13]

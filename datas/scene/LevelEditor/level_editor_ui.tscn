@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://c2nyqlo2n6s0k"]
+[gd_scene load_steps=9 format=3 uid="uid://c2nyqlo2n6s0k"]
 
 [ext_resource type="FontFile" uid="uid://cblbl0ue1f5sl" path="res://datas/ressources/fonts/rage_italic.TTF" id="1_gq4qg"]
 [ext_resource type="Script" path="res://datas/scripts/level_editor/level_editor_ui.gd" id="1_harp3"]
 [ext_resource type="Theme" uid="uid://by1ehfr2uc6tt" path="res://datas/themes/level_editor_ui.tres" id="2_qalhl"]
 [ext_resource type="PackedScene" uid="uid://cistd7udthb8t" path="res://datas/scene/level_editor.tscn" id="3_uuxjd"]
+[ext_resource type="Texture2D" uid="uid://ximvucr367nj" path="res://datas/ressources/img/bricks.png" id="4_ijtdv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_eqnqe"]
 font_size = 32
@@ -61,6 +62,19 @@ clip_text = true
 text_overrun_behavior = 3
 metadata/_edit_use_anchors_ = true
 
+[node name="LabelTitleBrickChoice" type="Label" parent="panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 2
+theme = ExtResource("2_qalhl")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_gq4qg")
+theme_override_font_sizes/font_size = 60
+text = "Choix de la briques:"
+label_settings = SubResource("LabelSettings_eqnqe")
+clip_text = true
+text_overrun_behavior = 3
+metadata/_edit_use_anchors_ = true
+
 [node name="HBoxContainerColor" type="HBoxContainer" parent="panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 2
@@ -97,6 +111,85 @@ size_flags_horizontal = 3
 context_menu_enabled = false
 scroll_fit_content_height = true
 
+[node name="Panel" type="Panel" parent="panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="panel/VBoxContainer/Panel"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ButtonPreviousBrick" type="Button" parent="panel/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Previous"
+
+[node name="Control" type="Control" parent="panel/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sprite2D" type="Node2D" parent="panel/VBoxContainer/Panel/HBoxContainer/Control"]
+position = Vector2(51.9998, 52)
+
+[node name="Sprite2D" type="Sprite2D" parent="panel/VBoxContainer/Panel/HBoxContainer/Control/Sprite2D"]
+texture = ExtResource("4_ijtdv")
+hframes = 8
+vframes = 8
+frame = 60
+
+[node name="ButtonNextBrick" type="Button" parent="panel/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Suivante"
+
+[node name="LabelGestionFichiers" type="Label" parent="panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 2
+theme = ExtResource("2_qalhl")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_gq4qg")
+theme_override_font_sizes/font_size = 60
+text = "Gestion du fichier:"
+label_settings = SubResource("LabelSettings_eqnqe")
+clip_text = true
+text_overrun_behavior = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainerFiles" type="HBoxContainer" parent="panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonSaveMap" type="Button" parent="panel/VBoxContainer/HBoxContainerFiles"]
+layout_mode = 2
+text = "Sauvegarder"
+
+[node name="ButtonLoadMap" type="Button" parent="panel/VBoxContainer/HBoxContainerFiles"]
+clip_contents = true
+layout_mode = 2
+text = "Charger"
+
+[node name="LabelVersion" type="Label" parent="panel/VBoxContainer/HBoxContainerFiles"]
+clip_contents = true
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+theme = ExtResource("2_qalhl")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_gq4qg")
+theme_override_font_sizes/font_size = 60
+text = "V1.0"
+label_settings = SubResource("LabelSettings_eqnqe")
+horizontal_alignment = 2
+clip_text = true
+uppercase = true
+text_direction = 2
+metadata/_edit_use_anchors_ = true
+
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 z_index = -1
 layout_mode = 0
@@ -123,5 +216,8 @@ metadata/_edit_use_anchors_ = true
 
 [connection signal="text_changed" from="panel/VBoxContainer/HBoxContainerColor/TextEditColor" to="." method="_on_text_edit_color_text_changed"]
 [connection signal="text_changed" from="panel/VBoxContainer/HBoxContainerPower/TextEditPower" to="." method="_on_text_edit_power_text_changed"]
+[connection signal="pressed" from="panel/VBoxContainer/Panel/HBoxContainer/ButtonPreviousBrick" to="." method="_on_button_previous_brick_pressed"]
+[connection signal="pressed" from="panel/VBoxContainer/Panel/HBoxContainer/ButtonNextBrick" to="." method="_on_button_next_brick_pressed"]
+[connection signal="pressed" from="panel/VBoxContainer/HBoxContainerFiles/ButtonSaveMap" to="." method="_on_button_save_map_pressed"]
 [connection signal="ZoomKeyBoardShortCut" from="SubViewportContainer/SubViewport/LevelEditor" to="." method="_on_level_editor_zoom_key_board_short_cut"]
 [connection signal="value_changed" from="VSliderZoom" to="." method="_on_v_slider_zoom_value_changed"]
