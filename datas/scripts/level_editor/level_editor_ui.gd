@@ -232,3 +232,4 @@ func get_brick_name():
 func _on_button_save_map_pressed():
 	var tilemap_brick = self.get_node("SubViewportContainer/SubViewport/LevelEditor/TileMapBricks")
 	self._sys_file.export_map(tilemap_brick, "map_test.json")
+
