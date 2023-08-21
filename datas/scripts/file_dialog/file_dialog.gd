@@ -150,8 +150,13 @@ func _on_text_edit_path_text_changed():
 	var cmd_obj = self._cmd_obj.new(backup_cmd)
 	self.add_child(cmd_obj)
 	
+	var d = null
+	while cmd_obj.is_thread_alive():
+	  d = cmd_obj._cmd_obj._dict_command
 	
 	cmd_obj.queue_free()
+	
+	self.execute_command(d)
 	
 	"""
 	var recursive_path = ""
@@ -199,6 +204,23 @@ func _on_text_edit_path_text_changed():
 	self._textedit_path.text = path
 	self._textedit_path.set_caret_column(caret_position)
 	"""
+
+
+func execute_command(d):
+  """
+    Called for executing command parsed
+    from the path typed by the user.
+    
+    Take Args As:
+      d (dictionay(string:string) contains command datas
+  """
+  var start_cmd = d["start_command"]
+  if start_cmd == "$C":
+    pass
+  elif start_cmd == "$H":
+    pass
+  elif start_cmd == "$D":
+    pass
 
 func get_path_without_cmd(path:String, file_name:String, start_prefix:String):
 	var recursive_path = path.replace(start_prefix, "")
