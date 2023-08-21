@@ -16,10 +16,10 @@ func _ready():
 	self._thread.start(self._cmd_obj.execute_command)
 
 func get_commands():
-  return self._cmd._dict_command
+	return self._cmd._dict_command
 
-func is_thread_is_alive():
-  return self._thread.is_alive()
+func is_thread_alive():
+	return self._thread.is_alive()
 
 func _exit_tree():
 	self._thread.wait_to_finish()
@@ -76,8 +76,6 @@ class Command:
 			
 			self._dict_command = dict_infos
 			
-			print("arg:", self._argument)
-			print("cmd:",self._command)
 		else:
 			#Check for errors
 			pass
