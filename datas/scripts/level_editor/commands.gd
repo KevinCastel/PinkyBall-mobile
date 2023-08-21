@@ -15,6 +15,11 @@ func _ready():
 	self._thread = Thread.new()
 	self._thread.start(self._cmd_obj.execute_command)
 
+func get_commands():
+  return self._cmd._dict_command
+
+func is_thread_is_alive():
+  return self._thread.is_alive()
 
 func _exit_tree():
 	self._thread.wait_to_finish()
@@ -38,6 +43,7 @@ class Command:
 					recreate the directory where the user is
 				'E' specify the end of the command
 	"""
+	var _dict_command = {}
 	var _cmd : String
 	
 	@export var _command : String:
@@ -67,6 +73,9 @@ class Command:
 		if self.is_enough_syntax(dict_infos):
 			self._command = dict_infos["start_command"]
 			self._argument = dict_infos["argument"]
+			
+			self._dict_command = dict_infos
+			
 			print("arg:", self._argument)
 			print("cmd:",self._command)
 		else:
@@ -115,3 +124,5 @@ class Command:
 				dict_result["end_command"] = list_result[3]
 				
 		return dict_result
+
+  
