@@ -150,13 +150,15 @@ func _on_text_edit_path_text_changed():
 	var cmd_obj = self._cmd_obj.new(backup_cmd)
 	self.add_child(cmd_obj)
 	
-	var d = null
+	var d = {}
 	while cmd_obj.is_thread_alive():
-	  d = cmd_obj._cmd_obj._dict_command
+		d = cmd_obj._cmd_obj._dict_command
 	
 	cmd_obj.queue_free()
+	if len(d) > 0:
+		self.execute_command(d, self._path)
 	
-	self.execute_command(d)
+	self._textedit_path.set_caret_column(caret_position)
 	
 	"""
 	var recursive_path = ""
@@ -167,11 +169,6 @@ func _on_text_edit_path_text_changed():
 		self.show_message(self.MESSAGE_CREAT_DIR+" :"+argument)
 		
 		if "$E" in path:
-			recursive_path = self.get_path_without_cmd(path, argument, "$C")
-			self.execute_file_name_cmd(recursive_path, argument)
-			path = recursive_path+argument
-			self.clean_file_system_ui()
-			self.show_message(self.MESSAGE_SUCCESSFULL_CREATED_DIR)
 	elif "$D" in path:
 		argument = self.get_file_name_from_cmd(path)
 		self.clean_file_system_ui()
@@ -202,25 +199,54 @@ func _on_text_edit_path_text_changed():
 			self.show_message(self.MESSAGE_HELP_CMD_FINNISH)
 	
 	self._textedit_path.text = path
-	self._textedit_path.set_caret_column(caret_position)
 	"""
 
 
-func execute_command(d):
-  """
-    Called for executing command parsed
-    from the path typed by the user.
-    
-    Take Args As:
-      d (dictionay(string:string) contains command datas
-  """
-  var start_cmd = d["start_command"]
-  if start_cmd == "$C":
-    pass
-  elif start_cmd == "$H":
-    pass
-  elif start_cmd == "$D":
-    pass
+func execute_command(d:Dictionary, path:String):
+	"""
+	Called for executing command parsed
+	from the path typed by the user.
+	
+	Take Args As:
+	  d (dictionay(string:string) contains command datas
+	"""
+	var error_level = 0
+	var argument : String
+	if not "start_command" in d:
+		error_level = 1
+	
+	if not "end_command" in d:
+		error_level = 1
+	elif d["end_command"] != "$E":
+		error_level = 1
+	
+	if "argument" in d:
+		argument = d["argument"]
+	else:
+		error_level = 1
+	
+	if error_level == 0:
+		var start_cmd = d["start_command"]
+		if start_cmd == "$C":
+			self.create_file(path,argument)
+			self.clean_file_system_ui()
+			self.show_message(self.MESSAGE_SUCCESSFULL_CREATED_DIR)
+			self._textedit_path.text = path+"/"+argument
+			
+		elif start_cmd == "$H":
+			self.delete_dir(path)
+			path = path.replace(argument, "")
+			path = path.replace(d["start_command"],"")
+			path = path.replace(d["command_end"],"")
+			
+			self.clean_file_system_ui()
+			self._textedit_path.text = path
+		elif start_cmd == "$D":
+			self.delete_dir(path+argument)
+			path = path.replace(self.get_df_name(path), "")
+			self.clean_file_system_ui()
+			self._textedit_path.text = path
+	
 
 func get_path_without_cmd(path:String, file_name:String, start_prefix:String):
 	var recursive_path = path.replace(start_prefix, "")
@@ -229,7 +255,7 @@ func get_path_without_cmd(path:String, file_name:String, start_prefix:String):
 	return recursive_path
 
 
-func execute_delete_dir_cmd(path:String):
+func delete_dir(path:String):
 	var output = []
 	OS.execute("rm", ["-fr",path], output)
 
@@ -286,9 +312,9 @@ func get_file_name_from_cmd(path:String):
 	return file_name
 
 
-func execute_file_name_cmd(path:String, file_name:String):
+func create_file(path:String, file_name:String):
 	var output = []
-	OS.execute("mkdir",[path+file_name],output)
+	OS.execute("mkdir",[path+"/"+file_name],output)
 	
 
 func remove_special_char(path:String):
