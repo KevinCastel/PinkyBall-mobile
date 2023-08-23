@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://c2nyqlo2n6s0k"]
 
+[ext_resource type="Script" path="res://datas/ressources/scripts/level_editor/level_editor_ui.gd" id="1_gij35"]
 [ext_resource type="FontFile" uid="uid://cblbl0ue1f5sl" path="res://datas/ressources/fonts/rage_italic.TTF" id="1_gq4qg"]
-[ext_resource type="Script" path="res://datas/scripts/level_editor/level_editor_ui.gd" id="1_harp3"]
 [ext_resource type="Theme" uid="uid://by1ehfr2uc6tt" path="res://datas/themes/level_editor_ui.tres" id="2_qalhl"]
 [ext_resource type="PackedScene" uid="uid://cistd7udthb8t" path="res://datas/scene/level_editor.tscn" id="3_uuxjd"]
 [ext_resource type="Texture2D" uid="uid://ximvucr367nj" path="res://datas/ressources/img/bricks.png" id="4_ijtdv"]
@@ -25,7 +25,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_harp3")
+script = ExtResource("1_gij35")
 
 [node name="panel" type="Panel" parent="."]
 layout_mode = 1
