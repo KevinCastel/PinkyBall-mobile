@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bmmj7bxhwwh8j"]
 
-[ext_resource type="Script" path="res://datas/scripts/file_dialog/file_dialog.gd" id="1_k4i06"]
+[ext_resource type="Script" path="res://datas/ressources/scripts/file_dialog/file_dialog.gd" id="1_uxuyy"]
 
 [node name="FileDialog" type="Control"]
 layout_mode = 3
@@ -9,7 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_k4i06")
+script = ExtResource("1_uxuyy")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
