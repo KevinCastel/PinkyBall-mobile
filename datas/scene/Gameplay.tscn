@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://okmvhss35gek"]
 
 [ext_resource type="Texture2D" uid="uid://c0dq6vuu0g8kk" path="res://datas/ressources/img/walls.png" id="1_hftiu"]
-[ext_resource type="Script" path="res://datas/scripts/Gameplay.gd" id="1_qg1y5"]
+[ext_resource type="Script" path="res://datas/ressources/scripts/Gameplay/Gameplay.gd" id="1_vppb5"]
 [ext_resource type="Texture2D" uid="uid://ximvucr367nj" path="res://datas/ressources/img/bricks.png" id="2_3tr2i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sd3qi"]
@@ -150,7 +150,7 @@ sources/1 = SubResource("TileSetAtlasSource_rqmk5")
 
 [node name="Gameplay" type="Node2D"]
 position = Vector2(310, -138)
-script = ExtResource("1_qg1y5")
+script = ExtResource("1_vppb5")
 
 [node name="TileMapBricks" type="TileMap" parent="."]
 texture_filter = 5
