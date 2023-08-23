@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://cistd7udthb8t"]
 
-[ext_resource type="Script" path="res://datas/scripts/level_editor/level_editor.gd" id="1_cx4ny"]
 [ext_resource type="Texture2D" uid="uid://ximvucr367nj" path="res://datas/ressources/img/bricks.png" id="1_us2vw"]
+[ext_resource type="Script" path="res://datas/ressources/scripts/level_editor/level_editor.gd" id="1_xd8m6"]
 [ext_resource type="Texture2D" uid="uid://c0dq6vuu0g8kk" path="res://datas/ressources/img/walls.png" id="2_6fs7w"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sd3qi"]
@@ -149,7 +149,7 @@ physics_layer_0/collision_mask = 3
 sources/1 = SubResource("TileSetAtlasSource_rqmk5")
 
 [node name="LevelEditor" type="Node2D"]
-script = ExtResource("1_cx4ny")
+script = ExtResource("1_xd8m6")
 
 [node name="TileMapBricks" type="TileMap" parent="."]
 texture_filter = 5
