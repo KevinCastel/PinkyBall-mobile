@@ -9,8 +9,8 @@ var _path
 @onready var _panel_list = self.get_node("VBoxContainer/HBoxContainer/PanelActual/VBoxContainer")
 @onready var _textedit_path = self.get_node("VBoxContainer/PanelPath/TextEditPath")
 
-@onready var _path_obj = preload("res://datas/scripts/level_editor/path.gd")
-@onready var _cmd_obj = preload("res://datas/scripts/level_editor/commands.gd")
+@onready var _path_obj = preload("res://datas/ressources/scripts/level_editor/path.gd")
+@onready var _cmd_obj = preload("res://datas/ressources/scripts/level_editor/commands.gd")
 
 #All errors message are down here:
 const ERROR_PATH_UNFOUND = "Ce chemin n'existe pas"
@@ -31,6 +31,22 @@ func _process(_Okdelta):
 	if Input.is_action_pressed("return_textedit"):
 		if self._textedit_path.has_focus():
 			self._textedit_path.release_focus()
+
+func set_files_btns_properties():
+	var btn_load = self.get_node("VBoxContainer/HBoxContainerFiles/ButtonLoad")
+	var btn_save = self.get_node("VBoxContainer/HBoxContainerFiles/ButtonSave")
+	
+	var min_size : Vector2i = Vector2i(120, 6)
+	
+	btn_save.custom_miminum_size = min_size
+	btn_load.custom_minimum_size = min_size
+	
+	var v_size : Vector2i = Vector2i(120, 6)
+	
+	btn_load.set_size = v_size
+	btn_save.set_size = v_size
+	
+
 
 func add_btns():
 	for c in self._childrens:
