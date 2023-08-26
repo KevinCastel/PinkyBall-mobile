@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://bmmj7bxhwwh8j"]
+[gd_scene load_steps=5 format=3 uid="uid://bmmj7bxhwwh8j"]
 
 [ext_resource type="Script" path="res://datas/ressources/scripts/file_dialog/file_dialog.gd" id="1_uxuyy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ijf7"]
+bg_color = Color(0.847059, 0.396078, 0.823529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cbydq"]
+bg_color = Color(0.545098, 0.137255, 0.533333, 1)
+
+[sub_resource type="Theme" id="Theme_bs3kg"]
 
 [node name="FileDialog" type="Control"]
 layout_mode = 3
@@ -11,7 +19,19 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_uxuyy")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Panel" type="Panel" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0125868
+anchor_top = 0.0362654
+anchor_right = 0.987413
+anchor_bottom = 0.963735
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,13 +39,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelPath" type="Panel" parent="VBoxContainer"]
+[node name="PanelPath" type="Panel" parent="Panel/VBoxContainer"]
 clip_contents = true
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_3ijf7")
 
-[node name="TextEditPath" type="TextEdit" parent="VBoxContainer/PanelPath"]
+[node name="TextEditPath" type="TextEdit" parent="Panel/VBoxContainer/PanelPath"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.0251736
@@ -36,21 +57,21 @@ grow_horizontal = 2
 text = "hello"
 metadata/_edit_use_anchors_ = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
 clip_contents = true
 custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 size_flags_vertical = 9
 
-[node name="PanelRecent" type="Panel" parent="VBoxContainer/HBoxContainer"]
+[node name="PanelRecent" type="Panel" parent="Panel/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PanelActual" type="Panel" parent="VBoxContainer/HBoxContainer"]
+[node name="PanelActual" type="Panel" parent="Panel/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/PanelActual"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/PanelActual"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -62,4 +83,45 @@ offset_bottom = 2.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[connection signal="text_changed" from="VBoxContainer/PanelPath/TextEditPath" to="." method="_on_text_edit_path_text_changed"]
+[node name="Panel" type="Panel" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_cbydq")
+
+[node name="HBoxContainerFiles" type="HBoxContainer" parent="Panel/VBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.150538
+anchor_right = 1.0
+anchor_bottom = 0.849462
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_bs3kg")
+metadata/_edit_use_anchors_ = true
+
+[node name="TextEditFileName" type="TextEdit" parent="Panel/VBoxContainer/Panel/HBoxContainerFiles"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="Panel" type="VBoxContainer" parent="Panel/VBoxContainer/Panel/HBoxContainerFiles"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ButtonSave" type="Button" parent="Panel/VBoxContainer/Panel/HBoxContainerFiles/Panel"]
+clip_contents = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 4
+text = "Sauvegarder"
+
+[node name="TextEditFileExtension" type="TextEdit" parent="Panel/VBoxContainer/Panel/HBoxContainerFiles/Panel"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[connection signal="text_changed" from="Panel/VBoxContainer/PanelPath/TextEditPath" to="." method="_on_text_edit_path_text_changed"]
