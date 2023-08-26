@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://da6bb58d8wd8f"]
+
+[ext_resource type="Script" path="res://datas/ressources/scripts/file_dialog/context_menu.gd" id="1_8uu5g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6t83w"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="Panel" type="Panel"]
+anchors_preset = -1
+anchor_right = 0.184028
+anchor_bottom = 0.128086
+theme_override_styles/panel = SubResource("StyleBoxFlat_6t83w")
+script = ExtResource("1_8uu5g")
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ButtonRename" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Modifier le nom"
+
+[node name="ButtonDelete" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Supprimer"
+
+[connection signal="pressed" from="VBoxContainer/ButtonRename" to="." method="_on_button_rename_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonDelete" to="." method="_on_button_delete_pressed"]
