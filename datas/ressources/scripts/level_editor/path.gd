@@ -47,7 +47,7 @@ class Path:
 			Called for correcting path
 		"""
 		self._corrected_path = self._path
-		if "\n" in self._path:
+		if "\n" in self._corrected_path:
 			self._corrected_path = self.remove_line_return(self._corrected_path)
 		
 		self._corrected_path = self.apply_syntax(self._corrected_path)
