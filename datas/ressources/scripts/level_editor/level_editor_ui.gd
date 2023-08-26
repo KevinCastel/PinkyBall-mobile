@@ -10,7 +10,7 @@ the level_editor script
 
 @onready var _textEditPower = self.get_node("panel/VBoxContainer/HBoxContainerPower/TextEditPower")
 @onready var _textEditColor = self.get_node("panel/VBoxContainer/HBoxContainerColor/TextEditColor")
-@onready var _sys_file = preload("res://datas/scripts/level_editor/file.gd").new()
+@onready var _sys_file = preload("res://datas/ressources/scripts/level_editor/file.gd").new()
 
 var _brick_index = 0
 
