@@ -6,11 +6,16 @@ var _childrens = {}
 
 var _path
 
-@onready var _panel_list = self.get_node("VBoxContainer/HBoxContainer/PanelActual/VBoxContainer")
-@onready var _textedit_path = self.get_node("VBoxContainer/PanelPath/TextEditPath")
+@onready var _panel_list = self.get_node("Panel/VBoxContainer/HBoxContainer/PanelActual/VBoxContainer")
+@onready var _textedit_path = self.get_node("Panel/VBoxContainer/PanelPath/TextEditPath")
 
 @onready var _path_obj = preload("res://datas/ressources/scripts/level_editor/path.gd")
 @onready var _cmd_obj = preload("res://datas/ressources/scripts/level_editor/commands.gd")
+@onready var _contextMenuPreObj = preload("res://datas/scene/FileDIalog/context_menu.tscn")
+var _contextMenuObj
+var _is_context_menu_open = false
+
+var _btn_object_hovered
 
 #All errors message are down here:
 const ERROR_PATH_UNFOUND = "Ce chemin n'existe pas"
@@ -27,10 +32,20 @@ func _ready():
 	self.load_path()
 	self.add_btns()
 
-func _process(_Okdelta):
+func _process(_delta):
 	if Input.is_action_pressed("return_textedit"):
 		if self._textedit_path.has_focus():
+			
 			self._textedit_path.release_focus()
+		elif self._is_context_menu_open:
+			self.HideContextMenu()
+	
+	
+	if Input.is_action_just_pressed("right_click"):
+		if self._is_context_menu_open:
+			self.HideContextMenu()
+		else:
+			self.ShowContextMenu()
 
 func set_files_btns_properties():
 	var btn_load = self.get_node("VBoxContainer/HBoxContainerFiles/ButtonLoad")
@@ -109,6 +124,8 @@ func create_dir_btn(path:String):
 	btn_object.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	btn_object.set_size(Vector2(30,50),false)
 	btn_object.connect("pressed", _on_btn_dir_pressed.bind(btn_object.text))
+	btn_object.connect("mouse_entered", _on_btn_dir_hovered.bind(btn_object))
+	btn_object.connect("mouse_exited", _on_btn_dir_unhovered.bind(btn_object))
 	
 	self._panel_list.add_child(btn_object)
 
@@ -142,9 +159,9 @@ func get_df_name(path:String):
 	return df_name
 
 func _on_text_edit_path_text_changed():
+	var caret_position = self._textedit_path.get_caret_column()
 	var path = self._textedit_path.text
 	var backup_cmd = path
-	var caret_position = self._textedit_path.get_caret_column(0)
 	
 	var node_path_obj = self._path_obj.new(path)
 	self.add_child(node_path_obj)
@@ -174,48 +191,8 @@ func _on_text_edit_path_text_changed():
 	if len(d) > 0:
 		self.execute_command(d, self._path)
 	
-	self._textedit_path.set_caret_column(caret_position)
-	
-	"""
-	var recursive_path = ""
-	var argument = "" #can serve for stocking file_name specified for example
-	if "$C" in path:
-		argument = self.get_file_name_from_cmd(path)
-		self.clean_file_system_ui()
-		self.show_message(self.MESSAGE_CREAT_DIR+" :"+argument)
-		
-		if "$E" in path:
-	elif "$D" in path:
-		argument = self.get_file_name_from_cmd(path)
-		self.clean_file_system_ui()
-		self.show_message(self.MESSAGE_HELP_CMD_FINNISH)
-		if "$E" in path:
-			recursive_path = self.get_path_without_cmd(path, argument, "$D")
-			path = recursive_path
-			self.execute_delete_dir_cmd(path+argument)
-			self.clean_file_system_ui()
-			self.show_message(self.MESSAGE_SUCCESSFULL_DELETED_DIR)
-	elif "$H" in path:
-		argument = self.get_file_name_from_cmd(path)
-		if "$E" in path:
-			if argument == ".":
-				recursive_path = self.get_path_without_cmd(path, argument, "$H")
-				if recursive_path.ends_with("/"):
-					#recursive_path = self.correct_path(recursive_path)
-					
-					self.execute_delete_dir_cmd(recursive_path)
-					self.execute_file_name_cmd(recursive_path,"")
-					self.clean_file_system_ui()
-					self.show_message(self.MESSAGE_SUCCESSFULL_DELETED_DIR)
-				else:
-					self.clean_file_system_ui()
-					self.show_message(self.MESSAGE_HELP_DEL_ALL)
-		else:
-			self.clean_file_system_ui()
-			self.show_message(self.MESSAGE_HELP_CMD_FINNISH)
-	
 	self._textedit_path.text = path
-	"""
+	self._textedit_path.set_caret_column(caret_position)
 
 
 func execute_command(d:Dictionary, path:String):
@@ -262,7 +239,7 @@ func execute_command(d:Dictionary, path:String):
 			path = path.replace(self.get_df_name(path), "")
 			self.clean_file_system_ui()
 			self._textedit_path.text = path
-	
+
 
 func get_path_without_cmd(path:String, file_name:String, start_prefix:String):
 	var recursive_path = path.replace(start_prefix, "")
@@ -272,6 +249,7 @@ func get_path_without_cmd(path:String, file_name:String, start_prefix:String):
 
 
 func delete_dir(path:String):
+	print("tentative d'élimination de:'",path,"'")
 	var output = []
 	OS.execute("rm", ["-fr",path], output)
 
@@ -301,6 +279,20 @@ func show_message(error:String):
 	self._panel_list.add_child(label_object)
 
 
+func ShowContextMenu():
+	if not self._is_context_menu_open:
+		self._contextMenuObj = self._contextMenuPreObj.instantiate()
+		self.add_child(self._contextMenuObj)
+		self._contextMenuObj.name = "context_menu"
+		self._contextMenuObj._path = self._textedit_path.text
+		self._contextMenuObj._btn_object = self._btn_object_hovered
+		self._contextMenuObj.global_position = self.get_global_mouse_position()
+		self._is_context_menu_open = true
+
+func HideContextMenu():
+	if self._is_context_menu_open:
+		self._is_context_menu_open = false
+		self._contextMenuObj.queue_free()
 
 func get_file_name_from_cmd(path:String):
 	var array_chars = path.split("")
@@ -350,6 +342,15 @@ func remove_special_char(path:String):
 		index_c += 1
 	return path
 
+
+func _on_btn_dir_hovered(btn_obj):
+	self._btn_object_hovered = btn_obj
+
+
+func _on_btn_dir_unhovered(btn_obj):
+	if self._btn_object_hovered:
+		self._btn_object_hovered = null
+
 func _on_btn_dir_pressed(txt:String):
 	var dir_object = self._dicts_btns_dir[txt]
 	var new_path = dir_object.path
@@ -357,6 +358,7 @@ func _on_btn_dir_pressed(txt:String):
 	self.clean_file_system_ui()
 	self.load_path()
 	self.add_btns()
+
 
 class Dir:
 	var dir_name = ""
